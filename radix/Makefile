@@ -1,3 +1,10 @@
 
-radix: 
-	cc radix.c -o radix
+bin/radix : radix.c 
+	mkdir -p bin
+		cc -g radix.c -o bin/radix
+
+clean : 
+	rm -f bin/radix
+
+run : 
+	./bin/radix
