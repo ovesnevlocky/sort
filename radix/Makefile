@@ -8,3 +8,9 @@ clean :
 
 run : 
 	./bin/radix
+
+valgrind : 
+	valgrind ./bin/radix
+
+gdb : 
+	gdb ./bin/radix

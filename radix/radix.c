@@ -1,6 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+void freeBacket(int **backetArr)
+{
+	for(int i = 0; i < 10; i++)
+		free(backetArr[i]);
+
+	free(backetArr);
+
+}
+
 int findBiggestNum(int a)
 {
 	int ret = 0;
@@ -13,37 +23,32 @@ int findBiggestNum(int a)
 	return ret;
 }
 
-int getIndex(int num, int count)
+void printBacket(int size, int **backetArr)
 {
-
-	if(num < 0)
-		return 0;
-	if(num <= 9 && count > 0)
-		return 0;
-	if(num <= 9 && count == 0)
-		return num;	
-	while(count > 0)
-	{
-		num = num/10;
-		count--;
-		printf("num: %i, count: %i \n", num, count);
-		if(num < 0)
-			break;
-	}
-
-	return  num % 10;
-}
-
-
-int **prepareArr(int size)
-{
-	int **arrForSorting = malloc(sizeof(int*) * 10);
-
-	for(int i = 0;  i < 10; i++)
-		arrForSorting[i] = calloc(sizeof(int)* size, 1);
 
 	int *tmp_arr = NULL; 
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < 10; i++)
+	{
+		tmp_arr = backetArr[i];
+		for(int j = 0; j < size; j++)
+		{
+			printf("%i ", tmp_arr[j]);
+		}
+		putchar('\n');
+		tmp_arr = NULL;
+
+	}
+}
+int **prepareArr(int size)
+{
+	int **arrForSorting = calloc(sizeof(int*),  10);
+
+	//biggest possible size of subarray is the sizeof  the original length of array//	
+	for(int i = 0;  i < 10; i++)
+		arrForSorting[i] = calloc(sizeof(int) , size);
+
+	int *tmp_arr = NULL; 
+	for(int i = 0; i < 10; i++)
 	{
 		tmp_arr = arrForSorting[i];
 		for(int j = 0; j < size; j++)
@@ -59,7 +64,6 @@ int **prepareArr(int size)
 
 int findBiggestNumarr(int *arrForSorting, int size)
 {
-
 	int biggestNum = 0;
 	int *tmp_arr = NULL;
 	int tmp = 0;
@@ -72,53 +76,107 @@ int findBiggestNumarr(int *arrForSorting, int size)
 	return biggestNum; 
 }
 
+
+int getIndex(int num, int count)
+{
+	int ret = 0;
+	if(num <= 9 && count > 0)
+		return 0;
+	if(num <= 9 && count == 0)
+		return num;
+	while(count > 0)
+	{
+		count--;
+		//printf("num: %i, count: %i: modulo%i \n", num, count, num % 10);
+		num = num / 10;
+		if(num < 0)
+			return 0;
+	}
+
+	return  num % 10;
+}
+
+
+void setSorted(int *arr, int **backetArr, int biggestNum, int sizeArr)
+{
+	int idxArr = 0;
+	for(int i = 0; i < 10; i++)
+	{
+		int *tmpArr = backetArr[i];
+		int count = 0;
+		if(idxArr > sizeArr)
+			break;
+		while(count <sizeArr)
+		{
+			//if whats inside is -1 or atleast expected -1// 
+			if(tmpArr[count]  < 0)
+				break;
+
+			if(tmpArr[count] > -1)
+			{
+				arr[idxArr++] = tmpArr[count];
+			}
+			//set -1 to indicate empty//
+			tmpArr[count] = -1;	
+			count++;
+		}
+	}	
+
+}
+
 int main()
 {
-	int size = 10; 
-	int tmp = 0;
-	int num = 942256;
-	int pos = 0;
+	int pos = 2;
+	int arr[] = {12, 3423, 4, 1, 77, 3, 2, 5, 34, 221, 853, 232223};
+	int size = sizeof(arr)/sizeof(arr[0]); 
+	int num = 12345;
 	
-	int arr[] = {12, 3423, 2, 1, 77, 3};
+	//printf("%is %is position is %i\n", num, pos, getIndex(num, pos));
 
-
-	printf("%is %is position is %i\n", num, pos, getIndex(num, pos));
-
-	int sorted[size];
-
-	int biggestNum = findBiggestNumarr(arr, 6);
+	int biggestNum = findBiggestNumarr(arr, size);
 	int *tmp_arr = NULL;
+	printf("biggest num is %i\n", biggestNum);	
+	int **backetArr = prepareArr(size);
 	
-	int **arrForSorting = prepareArr(biggestNum);
-	for(int i = 0; i < 6; i++)
+	for(int i = 0; i < biggestNum; i++)
 	{
-		int target = arr[i];
-		int idx = getIndex(target, i);
-		tmp_arr = arrForSorting[idx];
-		int idxInArr = 0;
-		while(idxInArr < 10)
+		for(int j = 0; j < size; j++)
 		{
-			if(tmp_arr[idxInArr] == -1)
+			int target = arr[j];
+			int idx = getIndex(target,i );
+			int idxInArr = 0;
+			//idx should be from 0 to 9
+			tmp_arr = backetArr[idx];
+			//printf(" idx of arr is: %i\n", idx);
+			//printf("%i %i\n", i, target);
+			while(idxInArr < size + 1)
 			{
-				tmp_arr[idxInArr] = target;
-				break;
+				//if nothing in there, should be initialized as -1
+				if(tmp_arr[idxInArr] == -1)
+				{
+					tmp_arr[idxInArr] = target;
+					break;
+				}
+				idxInArr++;
 			}
-			idxInArr++;
+			tmp_arr = NULL;
 		}
-	}
+		
+	setSorted(arr, backetArr, biggestNum, size);
 	for(int i = 0; i < size; i++)
-	{
-		tmp_arr = arrForSorting[i];
-		for(int j = 0; j < biggestNum; j++)
-		{
-			printf("%i ", tmp_arr[j]);		
-		}
-		putchar('\n');
-		tmp_arr = NULL;
+		printf("%i ", arr[i]);
+	putchar('\n');
+	//printBacket(biggestNum, backetArr);
+
 	}
-	printf("biggest num has %i digits\n", biggestNum);	
+//	printf("biggest num has %i digits\n", biggestNum);	
+
+	for(int i = 0; i < size; i++)
+		printf("%i ", arr[i]);
+
 	putchar('\n');
 
+	freeBacket(backetArr);
 	return 0;
 
 		
