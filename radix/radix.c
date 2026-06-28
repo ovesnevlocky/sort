@@ -62,7 +62,7 @@ uint32_t **prepareArr(int size)
 	return arrForSorting;
 }
 
-
+//function to find max number of digits in an array
 int findBiggestNumarr(uint32_t *arrForSorting, int size)
 {
 	int biggestNum = 0;
@@ -77,11 +77,9 @@ int findBiggestNumarr(uint32_t *arrForSorting, int size)
 	return biggestNum; 
 }
 
-
+//function to find count-th location of digit in a number
 int getIndex(uint32_t num, int count)
 {
-	if(num <= 9 && count > 0)
-		return 0;
 	if(num <= 9 && count == 0)
 		return num;
 	while(count > 0)
@@ -117,7 +115,6 @@ int main()
 {
 	FILE *fp = fopen("test.txt", "r");
 	
-       	//int arr[] = {1234, INT_MAX,-1, 1,  INT_MIN, 43, -123454, 0, 32, 1, 1234, 5432, -2345432, 432343, -2304320, -2, -32, 4 , -123443929, 0, -42, -1234563};
 	int size;
 	fscanf(fp, "%i", &size);
 	int input;
@@ -155,9 +152,6 @@ int main()
 		}
 		tmp_arr = NULL;
 		setSorted(arr32, backetArr, biggestNum, size);
-		//for(int i = 0; i < size; i++)
-		//	printf("%lu ", arr32[i]);
-		//putchar('\n');
 
 	}
 
@@ -165,8 +159,6 @@ int main()
 	
 	for(int i = 0; i < size; i++)
 		printf("%i\n", arr[i]);
-
-	//putchar('\n');
 
 	freeBacket(backetArr);
 	return 0;
