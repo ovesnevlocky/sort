@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 
-void freeBacket(int **backetArr)
+void freeBacket(uint32_t **backetArr)
 {
 	for(int i = 0; i < 10; i++)
 		free(backetArr[i]);
@@ -12,7 +12,6 @@ void freeBacket(int **backetArr)
 	free(backetArr);
 
 }
-
 
 static inline uint32_t bitSignReverseToU32(int a)
 {
@@ -25,7 +24,22 @@ static inline int bitSignReverseToInt(uint32_t a)
 	return (int)a ^ 0x80000000;
 
 }
-int findBiggestNum(int a)
+
+void convertToInt(uint32_t *src,int *dst,   int size)
+{
+	for(int i = 0; i < size; i++)
+		dst[i] = bitSignReverseToInt(src[i]);
+
+}
+	
+void convertToU32(uint32_t *dst,int *src,   int size)
+{
+	for(int i = 0; i < size; i++)
+		dst[i] = bitSignReverseToU32(src[i]);
+
+}
+	
+int findBiggestNum(uint32_t a)
 {
 	int ret = 0;
 	while(a > 0)
@@ -37,39 +51,22 @@ int findBiggestNum(int a)
 	return ret;
 }
 
-void printBacket(int size, int **backetArr)
+uint32_t **prepareArr(int size)
 {
-
-	int *tmp_arr = NULL; 
-	for(int i = 0; i < 10; i++)
-	{
-		tmp_arr = backetArr[i];
-		for(int j = 0; j < size; j++)
-		{
-			printf("%i ", tmp_arr[j]);
-		}
-		putchar('\n');
-		tmp_arr = NULL;
-
-	}
-}
-
-int **prepareArr(int size)
-{
-	int **arrForSorting = calloc(sizeof(int*),  10);
+	uint32_t **arrForSorting = calloc(sizeof(uint32_t*),  10);
 
 	//biggest possible size of subarray is the sizeof  the original length of array//	
 	for(int i = 0;  i < 10; i++)
-		arrForSorting[i] = calloc(sizeof(int) , size);
+		arrForSorting[i] = calloc(sizeof(uint32_t) , size);
 
 	return arrForSorting;
 }
 
 
-int findBiggestNumarr(int *arrForSorting, int size)
+int findBiggestNumarr(uint32_t *arrForSorting, int size)
 {
 	int biggestNum = 0;
-	int *tmp_arr = NULL;
+	uint32_t *tmp_arr = NULL;
 	int tmp = 0;
 	for(int i = 0; i < size; i++)
 	{
@@ -81,9 +78,8 @@ int findBiggestNumarr(int *arrForSorting, int size)
 }
 
 
-int getIndex(int num, int count)
+int getIndex(uint32_t num, int count)
 {
-	int ret = 0;
 	if(num <= 9 && count > 0)
 		return 0;
 	if(num <= 9 && count == 0)
@@ -100,13 +96,12 @@ int getIndex(int num, int count)
 }
 
 
-void setSorted(int *arr, int **backetArr, int biggestNum, int sizeArr)
+void setSorted(uint32_t *arr, uint32_t **backetArr, int biggestNum, int sizeArr)
 {
 	int idxArr = 0;
 	for(int i = 0; i < 10; i++)
 	{
-		int *tmpArr = backetArr[i];
-		int count = 0;
+		uint32_t *tmpArr = backetArr[i];
 		for(int j = 1; j < tmpArr[0] + 1; j++)
 		{
 			arr[idxArr] = tmpArr[j];
@@ -120,47 +115,43 @@ void setSorted(int *arr, int **backetArr, int biggestNum, int sizeArr)
 
 int main()
 {
-
-	int test =INT_MAX;
-	uint32_t result;
-	result = bitSignReverseToU32(test);
-
-	printf("%i converted to %lu\n",test,  result);
 	
-	printf("and back to %i\n", bitSignReverseToInt(result));
-	int pos = 2;
-	int arr[] = {12, 3423, 4, 1,23, 19111919, 23223, 323253, 9876543, 77, 3, 2, 5, 34, 221, 853, 232223 , 0 , 0};
-	int size = sizeof(arr)/sizeof(arr[0]); 
-	int num = 12345;
+	//int arr[] = {12, 3423, 4, 1,23, 19111919, 23223, 323253, 9876543, 77, 3, 2, 5, 34, 221, 853, 232223 , 0 , 0};
+       	int arr[] = {1234, INT_MAX, INT_MIN, 43, -123454, 0, 32, 1, 1234, 5432, -2345432, 432343, -2304320, -2, -32, 4 , -123443929, 0, -42, -1234563};
+	int size = sizeof(arr)/sizeof(arr[0]);
 	
-	//printf("%is %is position is %i\n", num, pos, getIndex(num, pos));
-
-	int biggestNum = findBiggestNumarr(arr, size);
-	int *tmp_arr = NULL;
+	uint32_t *arr32 = malloc(sizeof(uint32_t) * size);
+		
+	convertToU32(arr32, arr, size);
+	int biggestNum = findBiggestNumarr(arr32, size);
 	printf("biggest num is %i\n", biggestNum);	
-	int **backetArr = prepareArr(size + 1);
+	
+	uint32_t *tmp_arr = NULL;
+	uint32_t **backetArr = prepareArr(size + 1);
 	
 	for(int i = 0; i < biggestNum; i++)
 	{
 		for(int j = 0; j < size; j++)
 		{
-			int target = arr[j];
-			int idx = getIndex(target,i );
+			uint32_t target = arr32[j];
+			int idx = getIndex(target,i);
 			//idx should be from 0 to 9
 			tmp_arr = backetArr[idx];
 			int idxInArr = tmp_arr[0];
 			tmp_arr[idxInArr + 1] = target;
 			//0th index holds number of elements in the array//
 		       	tmp_arr[0]+= 1;	
-			//tmp_arr = NULL;
 		}
 		tmp_arr = NULL;
-		setSorted(arr, backetArr, biggestNum, size);
+		setSorted(arr32, backetArr, biggestNum, size);
 		for(int i = 0; i < size; i++)
-			printf("%i ", arr[i]);
+			printf("%lu ", arr32[i]);
 		putchar('\n');
 
 	}
+
+	convertToInt(arr32, arr, size);
+	
 	for(int i = 0; i < size; i++)
 		printf("%i ", arr[i]);
 
@@ -168,6 +159,5 @@ int main()
 
 	freeBacket(backetArr);
 	return 0;
-
 		
 }
