@@ -13,6 +13,9 @@ void freeBacket(uint32_t **backetArr)
 
 }
 
+
+//flip the sign bit to make
+//comparison of negative ints possible
 static inline uint32_t bitSignReverseToU32(int a)
 {
 	return (uint32_t)a ^ 0x80000000u;
@@ -77,7 +80,7 @@ int findBiggestNumarr(uint32_t *arrForSorting, int size)
 	return biggestNum; 
 }
 
-//function to find count-th location of digit in a number
+//function to find count-th location of digit in a value 
 int getIndex(uint32_t num, int count)
 {
 	if(num <= 9 && count == 0)
@@ -86,6 +89,7 @@ int getIndex(uint32_t num, int count)
 	{
 		count--;
 		num = num / 10;
+		
 		if(num < 0)
 			return 0;
 	}
@@ -106,6 +110,7 @@ void setSorted(uint32_t *arr, uint32_t **backetArr, int biggestNum, int sizeArr)
 			idxArr++;
 
 		}
+		//reset the count//
 		tmpArr[0] = 0;
 	}	
 
@@ -113,7 +118,7 @@ void setSorted(uint32_t *arr, uint32_t **backetArr, int biggestNum, int sizeArr)
 
 int main()
 {
-	FILE *fp = fopen("expected10k.txt", "r");
+	FILE *fp = fopen("test100k.txt", "r");
 	
 	int size;
 	fscanf(fp, "%i", &size);
@@ -135,8 +140,11 @@ int main()
 	printf("%i\n", size);	
 	
 	uint32_t *tmp_arr = NULL;
+	//0th idx of each array have count variable
+	//thats why + 1
 	uint32_t **backetArr = prepareArr(size + 1);
-	
+
+		
 	for(int i = 0; i < biggestNum; i++)
 	{
 		for(int j = 0; j < size; j++)
@@ -155,6 +163,7 @@ int main()
 
 	}
 
+	//flip the sign bit back to original//
 	convertToInt(arr32, arr, size);
 	
 	for(int i = 0; i < size; i++)
