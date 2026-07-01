@@ -19,8 +19,11 @@ bool isStackFull(Stack *s);
 
 bool isStackEmpty(Stack *s);
 
-bool stackPush(Stack *s, void *var);
-       	
+bool stackPush(Stack *s, var a);
+
+var stackPeek(Stack *s);
+
+var  stackPop(Stack *s);
 void hellostack();
 
 #endif

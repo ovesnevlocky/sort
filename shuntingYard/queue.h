@@ -25,9 +25,9 @@ bool isQueueEmpty(Queue *q);
 
 bool isQueueFull(Queue *q);
 
-bool enqueue(Queue *q, var a);
+bool pushQueue(Queue *q, var a);
 
-bool dequeue(Queue *q);
+var popQueue(Queue *q);
 
 var peek(Queue *q);
 
