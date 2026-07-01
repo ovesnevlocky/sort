@@ -20,7 +20,7 @@ bool isQueueEmpty(Queue *q)
 
 bool isQueueFull(Queue *q)
 {
-	return q -> count >= MAX_SIZE;
+	return q -> count > MAX_SIZE;
 }
 
 bool pushQueue(Queue *q, var a)
