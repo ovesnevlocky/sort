@@ -9,3 +9,9 @@ run:
 
 clean: 
 	rm -f ./bin/main
+
+valgrind:
+	valgrind ./bin/main
+
+gdb:
+	gdb ./bin/main

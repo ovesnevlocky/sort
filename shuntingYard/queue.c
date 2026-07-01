@@ -26,7 +26,10 @@ bool isQueueFull(Queue *q)
 bool pushQueue(Queue *q, var a)
 {
 	if(isQueueFull(q))
+	{
+		printf("queue is full Max: %i, Current: %i\n", MAX_SIZE, q->count);
 		return false;
+	}
 
 	q->arr[q->tail] = a;
 	

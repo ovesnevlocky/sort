@@ -1,57 +1,327 @@
 #include <stdio.h>
+#include "queue.h"
+#include "stack.h"
+#include "token.h"
 
-
-typedef enum varType
+void printMem(var tmp)
 {
-	UNINICIALIZED = 0,
-	INT = 10,
-	CHAR = 11
-}varType;
 
+	if(tmp.tag == UNINICIALIZED)
+		printf("uninicialized\n");
 
-typedef struct 
-{
-	varType tag;
-	union
+	if(tmp.tag == INT)
 	{
-		int var;
-		char operand;
-	}data;
-}var;
-
-
-
-void printMem(var *a)
-{
-
-	if(a->tag == INT)
+		printf("popped: %i\n", tmp.data.var);
+	}
+	else if(tmp.tag == CHAR)
 	{
-		printf("%i\n", a->data.var);
+		printf("popped: %c\n", tmp.data.operand);
+	}
+}
+
+void testStackPushPop()
+{
+	Stack s;
+
+	stackInit(&s);
+
+	var tmpi = {0};
+	var tmpc = {0};
+	var ret = {0};
+
+	tmpc.tag = CHAR;
+	tmpi.tag = INT; 
+
+	int i = 0;
+	char ch = 'a';
 	
-	}
-	else if(a->tag == CHAR)
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//0
+	
+	ret = stackPop(&s);
+	//
+	
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//1
+
+	ret = stackPop(&s);
+	//-	
+
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//2
+	
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//2 3 
+	ret = stackPop(&s);
+	//2
+	
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//2 4
+	
+	ret = stackPop(&s);
+	//2
+	
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//2 5 
+	
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//2 5 6
+	
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//2 5 6 7
+	
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//2 5 6 7 8
+	ret = stackPop(&s);
+
+	ret = stackPop(&s);
+	//2 5 6
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//2 5 6 9
+
+
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//2 5 6 9 10
+	
+	tmpi.data.var = i;
+	i++;
+	stackPush(&s, tmpi);
+	//2 5 6 9 10 11
+
+
+	while(!isStackEmpty(&s))
 	{
-		printf("%c\n", a->data.operand);
+		ret = stackPop(&s);
+
+		printMem(ret);	
 	}
-
-
+		
 
 }
-int main()
+
+void testStack()
 {
-	var arr[10] = {0};
+	Stack s;
 
-	var a;
-	a.tag = INT;
-	a.data.var = 1234;
+	stackInit(&s);
+
+	char ch = 'a';
+
+
+	var tmp  = stackPop(&s);
+
+	if(tmp.tag == UNINICIALIZED)
+		printf("ok\n");
+	else
+		printf("not ok\n");
+
+	for(int i = 0; i < 3 ; i++)
+	{
+		tmp.tag = INT;
+		tmp.data.var = i;
+		
+		stackPush(&s, tmp);
+	}
+
+	while(!isStackEmpty(&s))
+	{
+		tmp = stackPop(&s);
+
+		printMem(tmp);	
+	}
+
+	for(int i = 0; i < 3; i++)
+	{
+		tmp.tag = CHAR;
+		tmp.data.var = ch;
+		ch++;
+		stackPush(&s, tmp);
+	}
+
+	while(!isStackEmpty(&s))
+	{
+		tmp = stackPop(&s);
+		printMem(tmp);
+	}
+
+	for(int i = 0; i < 120 ; i++)
+	{
+		tmp.tag = INT;
+		tmp.data.var = i;
+		
+		stackPush(&s, tmp);
+	}
+
+	while(!isStackEmpty(&s))
+	{
+		tmp = stackPop(&s);
+		printMem(tmp);
+	}
+
+	for(int i = 0; i < 13; i++)
+	{
+		tmp = stackPop(&s);
+		printMem(tmp);
+	}
 	
-	printMem(&a);
+
+	stackPop(&s);
+
+	if(tmp.tag == UNINICIALIZED)
+		printf("ok\n");
+	else
+		printf("not ok\n");
+
+}
 
 
-	var b;
-	b.tag = CHAR;
-	b.data.operand = '*';
+void testQueue()
+{
+	Queue q;
 
-	printMem(&b);
+	char ch = 'a';
+	queueInit(&q);
+	var tmp = popQueue(&q);
+	
+
+	for(int i = 0; i <3  ; i++)
+	{
+		tmp.tag = INT;
+		tmp.data.var = i;
+		pushQueue(&q, tmp);
+	}
+
+	while(!isQueueEmpty(&q))
+	{
+		tmp = popQueue(&q);
+		printMem(tmp);
+	}
+
+	for(int i = 0; i < 5 ; i++)
+	{
+		tmp = popQueue(&q);
+		printMem(tmp);
+	}
+	
+
+
+	if(tmp.tag == UNINICIALIZED)
+		printf("ok\n");
+	else
+		printf("not ok\n");
+
+	for(int i = 0; i < 4 ; i++)
+	{
+		tmp.tag = INT;
+		tmp.data.var = i;
+		pushQueue(&q, tmp);
+	}
+
+	while(!isQueueEmpty(&q))
+	{
+		tmp = popQueue(&q);
+		printMem(tmp);
+	}
+
+}
+
+
+void testQueuePushPop()
+{
+	Queue q;
+	queueInit(&q);
+
+	var tmp = {0};
+	var ret = {0};
+
+	tmp.tag = INT; 
+	int i = 0;
+	char ch = 'a';
+	
+	
+	tmp.data.var = i;
+	pushQueue(&q, tmp);
+	i++;
+	//0
+
+	ret = popQueue(&q);
+	//-
+	
+
+	tmp.data.var = i;
+	pushQueue(&q, tmp);
+	i++;
+	tmp.data.var = i;
+	pushQueue(&q, tmp);
+	i++;
+	tmp.data.var = i;
+	pushQueue(&q, tmp);
+	i++;
+	//1 2 3
+	
+
+
+	ret = popQueue(&q);
+	//2 3
+	
+
+	tmp.data.var = i;
+	pushQueue(&q, tmp);
+	i++;
+	//2 3 4
+	
+	tmp.data.var = i;
+	pushQueue(&q, tmp);
+	i++;
+	//2 3 4 5
+
+	tmp.data.var = i;
+	pushQueue(&q, tmp);
+	i++;
+	//2 3 4 5 6
+	
+
+
+	ret = popQueue(&q);
+	while(!isQueueEmpty(&q))
+	{
+		tmp = popQueue(&q);
+		printMem(tmp);
+	}
+
+	for(int i = 0; i < 9; i++)
+	{
+		tmp.data.var = i;
+		pushQueue(&q, tmp);
+	}
+
+	while(!isQueueEmpty(&q))
+	{
+		tmp = popQueue(&q);
+		printMem(tmp);
+	}
+
 
 }
